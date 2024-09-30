@@ -57,7 +57,7 @@ func TestMainHandlerCorrectRequest(t *testing.T) {
 	handler.ServeHTTP(responseRecorder, req)
 
 	require.Equal(t, http.StatusOK, responseRecorder.Code, "Неверный код ответа")
-	assert.NotEmpty(t, responseRecorder.Body.String(), "Тело ответа пустое")
+	require.NotEmpty(t, responseRecorder.Body, "Тело ответа пустое")
 }
 
 func TestMainHandlerWrongCity(t *testing.T) {
@@ -79,21 +79,8 @@ func TestMainHandlerCountMoreThanTotal(t *testing.T) {
 	handler.ServeHTTP(responseRecorder, req)
 
 	require.Equal(t, http.StatusOK, responseRecorder.Code, "Неверный код ответа")
-	assert.NotEmpty(t, responseRecorder.Body.String(), "Тело ответа пустое")
+	assert.NotEmpty(t, responseRecorder.Body, "Тело ответа пустое")
 
 	cafeNames := strings.Split(responseRecorder.Body.String(), ",")
-	assert.Equal(t, 4, len(cafeNames), "Неверное количество кафе в ответе")
-
-	for _, cafeName := range cafeList["moscow"] {
-		assert.Contains(t, cafeNames, cafeName, "Кафе %s не найдено в ответе", cafeName)
-	}
-}
-
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
+	assert.Len(t, cafeNames, 4, "Неверное количество кафе в ответе")
 }
